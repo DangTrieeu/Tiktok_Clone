@@ -49,9 +49,9 @@ class _LikeButtonState extends State<LikeButton> {
         IconButton(
           onPressed: _toggleLike,
           icon: Icon(
-            _isLiked ? Icons.favorite : Icons.favorite_border,
+            Icons.favorite,
             color: _isLiked ? Colors.red : Colors.white,
-            size: 32,
+            size: 35,
           ),
         ),
         Text(

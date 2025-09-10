@@ -14,7 +14,17 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "TikTok Mini",
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primarySwatch: Colors.grey,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Colors.black,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.grey,
+          showUnselectedLabels: true,
+        ),
       ),
       home: MainScreen(),
     );

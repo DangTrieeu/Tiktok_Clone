@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tiktok_clone/videos/video_player.dart';
+import 'package:tiktok_clone/widgets/comment_sheet.dart';
 import 'package:tiktok_clone/widgets/like_button.dart';
+import 'package:gap/gap.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -10,7 +13,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final PageController _pageController = PageController();
 
   final List<Color> colors = [
-    Colors.cyanAccent,
+    Colors.grey,
     Colors.green,
     Colors.blue,
     Colors.orange,
@@ -26,43 +29,54 @@ class _HomeScreenState extends State<HomeScreen> {
         final color = colors[index % colors.length];
         return Stack(
           children: [
-
-            Container(color: color),
+            //Container(color: color),
+            
+            VideoPlayerItem(videoUrl: "assets/videos/1.mp4"),
 
             Positioned(
               right: 16,
-              bottom: 32,
+              bottom: 16,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-
                   CircleAvatar(
                     radius: 25,
                     backgroundImage: NetworkImage(
                       'https://i.pravatar.cc/150?img=${index + 1}',
                     ),
                   ),
-                  SizedBox(height: 20),
-
-                  // Column(
-                  //   children: [
-                  //     Icon(Icons.favorite, size: 40, color: Colors.white),
-                  //     Text("120k", style: TextStyle(color: Colors.white)),
-                  //   ],
-                  // ),
-                  // SizedBox(height: 20),
 
                   LikeButton(initialCount: 120, isLiked: false),
-                  SizedBox(height: 20),
 
-
-                  Column(
-                    children: [
-                      Icon(Icons.comment, size: 40, color: Colors.white),
-                      Text("3400", style: TextStyle(color: Colors.white)),
-                    ],
+                  GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.black12,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(16)),
+                        ),
+                        builder: (context) {
+                          final screenHeight = MediaQuery
+                              .of(context)
+                              .size
+                              .height;
+                          return SizedBox(
+                            height: screenHeight * 0.5,
+                            child: CommentSheet(),
+                          );
+                        },
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        Icon(Icons.comment, size: 40, color: Colors.white),
+                        Text("3400", style: TextStyle(color: Colors.white)),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 20),
 
                   Column(
                     children: [
@@ -70,9 +84,43 @@ class _HomeScreenState extends State<HomeScreen> {
                       Text("Share", style: TextStyle(color: Colors.white)),
                     ],
                   ),
-                ],
+                ].expand((widget) => [widget, Gap(20)]).toList(),
               ),
             ),
+
+            Positioned(
+              left: 16,
+              bottom: 16,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "@username",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      "This is a description of the video. #hashtag",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Icon(Icons.music_note, color: Colors.white, size: 16),
+                        SizedBox(width: 5),
+                        Text(
+                          "Original Sound - Artist Name",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+            )
           ],
         );
       },
