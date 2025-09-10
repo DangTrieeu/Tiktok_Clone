@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class LikeButton extends StatefulWidget {
   final int initialCount;
-  final bool isLiked;                // <-- thêm đây
+  final bool isLiked;
   final ValueChanged<bool>? onChanged;
 
   const LikeButton({
     Key? key,
     this.initialCount = 0,
-    this.isLiked = false,            // <-- tham số mặc định
+    this.isLiked = false,
     this.onChanged,
   }) : super(key: key);
 
@@ -23,7 +23,7 @@ class _LikeButtonState extends State<LikeButton> {
   @override
   void initState() {
     super.initState();
-    _isLiked = widget.isLiked;            // khởi tạo từ widget.isLiked
+    _isLiked = widget.isLiked;
     _likeCount = widget.initialCount;
   }
 

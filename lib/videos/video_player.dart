@@ -13,12 +13,13 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
   late VideoPlayerController _controller;
   bool _isPlaying = true;
 
+
   @override
   void initState() {
     super.initState();
     _controller = VideoPlayerController.asset(widget.videoUrl)
       ..initialize().then((_) {
-        setState(() {}); // refresh khi video load xong
+        setState(() {});
         _controller.play();
         _controller.setLooping(true);
       });
@@ -41,10 +42,15 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
     });
   }
 
+  void _toggleLike(){
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: _togglePlayPause,
+      onDoubleTap: _toggleLike,
       child: Stack(
         children: [
           _controller.value.isInitialized

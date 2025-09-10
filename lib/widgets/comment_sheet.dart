@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 
 class CommentSheet extends StatefulWidget {
-  const CommentSheet({super.key});
+  final int postIndex;
+  final int commentCount;
+  final ValueChanged<String>? onAddComment;
+  const CommentSheet({super.key, required this.postIndex, required this.commentCount, this.onAddComment});
 
   @override
   State<CommentSheet> createState() => _CommentSheetState();
 }
 
 class _CommentSheetState extends State<CommentSheet> {
-  // Dữ liệu mẫu cho bình luận
   final List<Map<String, String>> comments = [
     {
       'name': 'Nguyễn Văn A',
-      'avatar': '', // Để trống, sẽ dùng avatar mặc định
+      'avatar': '',
       'content': 'Video rất hay, cảm ơn bạn!'
     },
     {
@@ -28,13 +30,22 @@ class _CommentSheetState extends State<CommentSheet> {
   ];
 
   final TextEditingController _controller = TextEditingController();
+  late List<bool> expandedComments;
+
+  @override
+  void initState() {
+    super.initState();
+    expandedComments = List.generate(comments.length, (_) => false);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("3400 Comments", style: TextStyle(fontSize: 15)),
+        title: Text("${widget.commentCount} Comments", style: TextStyle(fontSize: 15)),
         centerTitle: true,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -51,18 +62,22 @@ class _CommentSheetState extends State<CommentSheet> {
           itemCount: comments.length,
           itemBuilder: (context, index) {
             final comment = comments[index];
+            final isExpanded = expandedComments[index];
+            final content = comment['content']!;
+            final maxLength = 120;
+            final showExpand = content.length > maxLength;
+            final displayContent =
+                !showExpand || isExpanded ? content : content.substring(0, maxLength) + '...';
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Avatar bên trái
                   CircleAvatar(
                     radius: 20,
                     child: Text(comment['name']![0]),
                   ),
                   SizedBox(width: 10),
-                  // Nội dung bên phải
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,25 +87,51 @@ class _CommentSheetState extends State<CommentSheet> {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 4),
-                        Text(comment['content']!),
-                        SizedBox(height: 8),
+                        Text(displayContent),
+                        if (showExpand && !isExpanded)
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                expandedComments[index] = true;
+                              });
+                            },
+                            child: Text(
+                              'Hiện thêm',
+                              style: TextStyle(color: Colors.blue, fontSize: 13),
+                            ),
+                          ),
+                        Row(
+                          children: [
+                            Text(
+                              '1 giờ trước',
+                              style: TextStyle(color: Colors.grey, fontSize: 12),
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              'Phản hồi',
+                              style: TextStyle(color: Colors.grey, fontSize: 12),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.thumb_up_alt_outlined, size: 20),
+                              onPressed: () {},
+                              padding: EdgeInsets.zero,
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.thumb_down_alt_outlined, size: 20),
+                              onPressed: () {},
+                              padding: EdgeInsets.zero,
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.thumb_up_alt_outlined, size: 20),
-                        onPressed: () {},
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.thumb_down_alt_outlined, size: 20),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
                 ],
-
               ),
             );
           },
@@ -130,7 +171,10 @@ class _CommentSheetState extends State<CommentSheet> {
               IconButton(
                 icon: Icon(Icons.send),
                 onPressed: () {
-                  // Xử lý gửi bình luận mới
+                  if (_controller.text.trim().isNotEmpty) {
+                    widget.onAddComment?.call(_controller.text.trim());
+                    _controller.clear();
+                  }
                 },
               ),
             ],
