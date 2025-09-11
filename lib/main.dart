@@ -1,10 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'models/post_provider.dart';
+import 'models/post.dart';
 import 'screens/home_screen.dart';
 import 'screens/search_screen.dart';
 import 'screens/profile_screen.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) {
+        final provider = PostProvider();
+        provider.setPosts(List.generate(4, (index) => Post(
+          id: 'post_$index',
+          videoUrl: 'assets/videos/${index + 1}.mp4',
+          user: '@user$index',
+          caption: 'Video số ${index + 1} - caption mẫu',
+          likeCount: 120 + index * 10,
+          commentCount: 3400 + index * 100,
+        )));
+        return provider;
+      },
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

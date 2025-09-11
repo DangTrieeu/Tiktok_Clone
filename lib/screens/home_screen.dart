@@ -1,65 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tiktok_clone/videos/video_player.dart';
 import 'package:tiktok_clone/widgets/comment_sheet.dart';
 import 'package:tiktok_clone/widgets/like_button.dart';
 import 'package:gap/gap.dart';
-import 'package:tiktok_clone/models/post.dart';
+import 'package:tiktok_clone/models/post_provider.dart';
 
-class HomeScreen extends StatefulWidget {
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreen extends StatelessWidget {
   final PageController _pageController = PageController();
-
-  // Danh sách các video assets
-  final List<String> videoAssets = [
-    'assets/videos/1.mp4',
-    'assets/videos/2.mp4',
-    'assets/videos/3.mp4',
-    'assets/videos/4.mp4',
-  ];
-
-  // Danh sách các Post
-  late List<Post> posts;
-
-  @override
-  void initState() {
-    super.initState();
-    posts = List.generate(videoAssets.length, (index) => Post(
-      id: 'post_$index',
-      videoUrl: videoAssets[index],
-      user: '@user$index',
-      caption: 'Video số ${index + 1} - caption mẫu',
-      likeCount: 120 + index * 10,
-      commentCount: 3400 + index * 100,
-    ));
-  }
-
-  void handleLike(int postIndex) {
-    setState(() {
-      final post = posts[postIndex];
-      post.likeCount += 1;
-    });
-  }
-
-  void handleUnlike(int postIndex) {
-    setState(() {
-      final post = posts[postIndex];
-      if (post.likeCount > 0) post.likeCount -= 1;
-    });
-  }
-
-  void handleAddComment(int postIndex, String comment) {
-    setState(() {
-      posts[postIndex].commentCount += 1;
-    });
-    // Có thể thêm logic lưu comment nếu cần
-  }
 
   @override
   Widget build(BuildContext context) {
+    final postProvider = Provider.of<PostProvider>(context);
+    final posts = postProvider.posts;
     return PageView.builder(
       controller: _pageController,
       scrollDirection: Axis.vertical,
@@ -68,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
         final post = posts[index];
         return Stack(
           children: [
-            VideoPlayerItem(videoUrl: post.videoUrl),
+            VideoPlayerItem(videoUrl: post.videoUrl, postIndex: index),
             Positioned(
               right: 16,
               bottom: 16,
@@ -81,17 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       'https://i.pravatar.cc/150?img=${index + 1}',
                     ),
                   ),
-                  LikeButton(
-                    initialCount: post.likeCount,
-                    isLiked: false,
-                    onChanged: (isLiked) {
-                      if (isLiked) {
-                        handleLike(index);
-                      } else {
-                        handleUnlike(index);
-                      }
-                    },
-                  ),
+                  LikeButton(postIndex: index),
                   GestureDetector(
                     onTap: () {
                       showModalBottomSheet(
@@ -109,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: CommentSheet(
                               postIndex: index,
                               commentCount: post.commentCount,
-                              onAddComment: (comment) => handleAddComment(index, comment),
+                              onAddComment: (comment) => postProvider.addComment(index, comment),
                             ),
                           );
                         },

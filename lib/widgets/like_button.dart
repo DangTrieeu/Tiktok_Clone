@@ -1,61 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tiktok_clone/models/post_provider.dart';
 
-class LikeButton extends StatefulWidget {
-  final int initialCount;
-  final bool isLiked;
-  final ValueChanged<bool>? onChanged;
-
-  const LikeButton({
-    Key? key,
-    this.initialCount = 0,
-    this.isLiked = false,
-    this.onChanged,
-  }) : super(key: key);
-
-  @override
-  State<LikeButton> createState() => _LikeButtonState();
-}
-
-class _LikeButtonState extends State<LikeButton> {
-  late bool _isLiked;
-  late int _likeCount;
-
-  @override
-  void initState() {
-    super.initState();
-    _isLiked = widget.isLiked;
-    _likeCount = widget.initialCount;
-  }
-
-  void _toggleLike() {
-    setState(() {
-      if (_isLiked) {
-        _isLiked = false;
-        _likeCount--;
-      } else {
-        _isLiked = true;
-        _likeCount++;
-      }
-    });
-
-    if (widget.onChanged != null) widget.onChanged!(_isLiked);
-  }
+class LikeButton extends StatelessWidget {
+  final int postIndex;
+  const LikeButton({Key? key, required this.postIndex}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final postProvider = Provider.of<PostProvider>(context);
+    final post = postProvider.posts[postIndex];
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
-          onPressed: _toggleLike,
+          onPressed: () => postProvider.toggleLike(postIndex),
           icon: Icon(
             Icons.favorite,
-            color: _isLiked ? Colors.red : Colors.white,
+            color: post.isLiked ? Colors.red : Colors.white,
             size: 35,
           ),
         ),
         Text(
-          '$_likeCount',
+          '${post.likeCount}',
           style: const TextStyle(color: Colors.white, fontSize: 14),
         ),
       ],

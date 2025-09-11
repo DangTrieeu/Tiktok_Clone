@@ -5,6 +5,7 @@ class Post {
   final String caption;
   int likeCount;
   int commentCount;
+  bool isLiked;
 
   Post({
     required this.id,
@@ -13,6 +14,7 @@ class Post {
     required this.caption,
     this.likeCount = 0,
     this.commentCount = 0,
+    this.isLiked = false,
   });
 }
 

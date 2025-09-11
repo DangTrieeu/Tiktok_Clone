@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:provider/provider.dart';
+import 'package:tiktok_clone/models/post_provider.dart';
 
 class VideoPlayerItem extends StatefulWidget {
   final String videoUrl;
-  const VideoPlayerItem({super.key, required this.videoUrl});
+  final int postIndex;
+  const VideoPlayerItem({super.key, required this.videoUrl, required this.postIndex});
 
   @override
   State<VideoPlayerItem> createState() => _VideoPlayerItemState();
@@ -42,8 +45,9 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
     });
   }
 
-  void _toggleLike(){
-
+  void _toggleLike() {
+    final postProvider = Provider.of<PostProvider>(context, listen: false);
+    postProvider.toggleLike(widget.postIndex);
   }
 
   @override
